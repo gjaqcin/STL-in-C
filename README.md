@@ -12,8 +12,6 @@ STL-in-C/
 ├── src/int_vector.c             # Implementacao
 ├── tests/test_int_vector.c      # Testes com assert
 ├── examples/vector_example.c    # Exemplo de uso
-├── Makefile                     # GNU Make / ambiente Unix
-├── build.bat                    # Windows + GCC MinGW
 └── .gitignore
 ```
 
@@ -28,34 +26,29 @@ STL-in-C/
 
 As operacoes que podem falhar retornam `bool`. Um indice valido satisfaz `index < size`. A memoria pertence ao vetor: **nao copie a struct por atribuicao** sem definir uma politica de copia.
 
-## Compilar no Windows (VS Code + GCC MinGW)
+## Compilar manualmente (GCC)
 
-Abra o terminal **na raiz do repositorio** e execute:
+Na raiz do repositorio, compile a implementacao junto do programa que vai utiliza-la.
+Nao e necessario Makefile nem script batch.
+
+No **Windows (PowerShell, GCC MinGW)**:
 
 ```powershell
-.\build.bat
-.\build\vector_example.exe
+gcc -std=c11 -Wall -Wextra -Wpedantic -Iinclude src/int_vector.c tests/test_int_vector.c -o test_vector.exe
+.\test_vector.exe
+
+gcc -std=c11 -Wall -Wextra -Wpedantic -Iinclude src/int_vector.c examples/vector_example.c -o vector_example.exe
+.\vector_example.exe
 ```
 
-O script compila `src/int_vector.c`, cria a biblioteca estatica `build/libcstl.a`, compila os testes e exemplo e executa os testes. Necessita de `gcc` e `ar` no PATH.
-
-## Compilar com GNU Make (Linux / Git Bash / MSYS)
+No **Linux / macOS (GCC ou Clang)**:
 
 ```sh
-make
-make test
-make example
+gcc -std=c11 -Wall -Wextra -Wpedantic -Iinclude src/int_vector.c tests/test_int_vector.c -o test_vector
+./test_vector
 ```
 
-## Compilacao manual (aprendizado)
-
-```sh
-gcc -std=c11 -Wall -Wextra -Wpedantic -Iinclude -c src/int_vector.c -o int_vector.o
-ar rcs libcstl.a int_vector.o
-gcc -std=c11 -Wall -Wextra -Wpedantic -Iinclude examples/vector_example.c libcstl.a -o vector_example
-```
-
-O header **declara** a API; o arquivo `.c` **define** as funcoes. O linker encontra as definicoes na biblioteca `.a`.
+O header `int_vector.h` **declara** as funcoes, enquanto `int_vector.c` contem as **definicoes**. O compilador e o linker conectam os dois arquivos ao executavel.
 
 ## Politica de crescimento e complexidade
 
