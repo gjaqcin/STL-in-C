@@ -1,16 +1,16 @@
-#include "cstl/int_vector.h"
+#include "vector.h"
 
 #include <stdint.h> /* SIZE_MAX */
 #include <stdlib.h> /* free, realloc */
 
-void cstl_int_vector_init(cstl_int_vector *v)
+void vector_init(vector *v)
 {
     v->data = NULL;
     v->size = 0;
     v->capacity = 0;
 }
 
-void cstl_int_vector_destroy(cstl_int_vector *v)
+void vector_destroy(vector *v)
 {
     free(v->data);
     v->data = NULL;
@@ -18,7 +18,7 @@ void cstl_int_vector_destroy(cstl_int_vector *v)
     v->capacity = 0;
 }
 
-bool cstl_int_vector_push_back(cstl_int_vector *v, int value)
+bool vector_push(vector *v, int value)
 {
     if (v->size == v->capacity)
     {
@@ -29,7 +29,7 @@ bool cstl_int_vector_push_back(cstl_int_vector *v, int value)
          * Check overflow BEFORE multiplying sizes, since size_t
          * arithmetic wraps around on overflow.
          */
-        const size_t max_elements = SIZE_MAX / sizeof(*v->data); // 2^31 - 1 / 32
+        const size_t max_elements = SIZE_MAX / sizeof(*v->data);
 
         size_t new_capacity = 4;
 
@@ -59,7 +59,7 @@ bool cstl_int_vector_push_back(cstl_int_vector *v, int value)
     return true;
 }
 
-bool cstl_int_vector_pop_back(cstl_int_vector *v)
+bool vector_pop(vector *v)
 {
     if (v->size == 0) return false;
 
@@ -68,7 +68,7 @@ bool cstl_int_vector_pop_back(cstl_int_vector *v)
     return true;
 }
 
-bool cstl_int_vector_get(const cstl_int_vector *v, size_t index, int *out)
+bool vector_get(const vector *v, size_t index, int *out)
 {
     if (index >= v->size || out == NULL) return false;
 
@@ -76,7 +76,7 @@ bool cstl_int_vector_get(const cstl_int_vector *v, size_t index, int *out)
     return true;
 }
 
-bool cstl_int_vector_set(cstl_int_vector *v, size_t index, int value)
+bool vector_set(vector *v, size_t index, int value)
 {
     if (index >= v->size) return false;
 

@@ -1,76 +1,75 @@
 # STL-in-C
 
-Uma pequena biblioteca de estruturas de dados escrita em **C11** para estudar ponteiros, alocação dinâmica, APIs, complexidade, testes e compilação separada.
+Biblioteca pessoal de estruturas de dados em **C11**, feita para aprender ponteiros, memória dinâmica, algoritmos e organização de código.
 
-O projeto é inspirado em operações da STL do C++, mas **não é uma implementação da STL**. O primeiro módulo é um vetor dinâmico de inteiros.
+O primeiro módulo é um **vector de inteiros**, inspirado na STL do C++, mas escrito do zero em C. Usamos nomes curtos e fáceis de ler.
 
 ## Estrutura
 
 ```text
 STL-in-C/
-├── include/cstl/int_vector.h    # API publica
-├── src/int_vector.c             # Implementacao
-├── tests/test_int_vector.c      # Testes com assert
-└── .gitignore
+├── include/
+│   └── vector.h          # Tipos e funções públicas
+├── src/
+│   └── vector.c          # Implementação
+├── tests/
+│   └── test_vector.c     # Testes com assert
+├── .gitignore
+└── README.md
 ```
 
-## API atual
+Os próximos módulos (stack, queue etc.) terão seus próprios arquivos `.h`, `.c` e testes.
 
-- `cstl_int_vector_init`: inicializa um vetor vazio.
-- `cstl_int_vector_push_back`: insere um inteiro; expande a capacidade quando necessário.
-- `cstl_int_vector_pop_back`: remove logicamente o ultimo inteiro.
-- `cstl_int_vector_get`: consulta um inteiro, usando parametro de saida.
-- `cstl_int_vector_set`: modifica um inteiro existente.
-- `cstl_int_vector_destroy`: libera memoria e zera os campos.
+## API do Vector
 
-As operacoes que podem falhar retornam `bool`. Um indice valido satisfaz `index < size`. A memoria pertence ao vetor: **nao copie a struct por atribuicao** sem definir uma politica de copia.
+| Função | Objetivo |
+| --- | --- |
+| `vector_init` | Inicializar uma estrutura vazia |
+| `vector_push` | Inserir no final e expandir a memória, se necessário |
+| `vector_pop` | Remover logicamente o último elemento |
+| `vector_get` | Ler um elemento por índice, usando parâmetro de saída |
+| `vector_set` | Alterar um elemento existente |
+| `vector_destroy` | Liberar a memória e zerar os campos |
 
-## Compilar manualmente (GCC)
+As funções que podem falhar retornam `bool`. Apenas índices `index < size` são válidos. O tipo `vector` contém um ponteiro para memória alocada; **não copie a estrutura por atribuição**, pois isso duplicaria a propriedade sobre o mesmo bloco e poderia causar `double free`.
 
-Na raiz do repositorio, compile a implementacao junto do programa que vai utiliza-la.
-Nao e necessario Makefile nem script batch.
+## Compilar manualmente
 
-No **Windows (PowerShell, GCC MinGW)**:
+Na raiz do repositório, com GCC no PATH:
+
+**Windows (PowerShell/MinGW)**
 
 ```powershell
-gcc -std=c11 -Wall -Wextra -Wpedantic -Iinclude src/int_vector.c tests/test_int_vector.c -o test_vector.exe
+gcc -std=c11 -Wall -Wextra -Wpedantic -Iinclude src/vector.c tests/test_vector.c -o test_vector.exe
 .\test_vector.exe
 ```
 
-No **Linux / macOS (GCC ou Clang)**:
+**Linux/macOS**
 
 ```sh
-gcc -std=c11 -Wall -Wextra -Wpedantic -Iinclude src/int_vector.c tests/test_int_vector.c -o test_vector
+gcc -std=c11 -Wall -Wextra -Wpedantic -Iinclude src/vector.c tests/test_vector.c -o test_vector
 ./test_vector
 ```
 
-O header `int_vector.h` **declara** as funcoes, enquanto `int_vector.c` contem as **definicoes**. O compilador e o linker conectam os dois arquivos ao executavel.
+O header `vector.h` **declara** a API e o arquivo `vector.c` **define** suas operações. O linker combina a implementação e o programa de testes. Não usamos arquivos Batch ou Makefile neste projeto.
 
-## Politica de crescimento e complexidade
+## Crescimento e complexidade
 
-A capacidade segue `0 -> 4 -> 8 -> 16 -> 32 -> ...`.
+A capacidade cresce geometricamente: `0 → 4 → 8 → 16 → 32 → ...`.
 
-| Operacao | Complexidade |
+| Operação | Complexidade |
 | --- | --- |
-| `push_back` | O(1) amortizado; O(n) quando precisa mover os elementos |
-| `pop_back` | O(1) |
-| `get` / `set` | O(1) |
-| `init` / `destroy` | O(1) para os elementos `int` |
+| `vector_push` | O(1) amortizado; O(n) em expansão com cópia |
+| `vector_pop` | O(1) |
+| `vector_get` / `vector_set` | O(1) |
+| `vector_init` / `vector_destroy` | O(1) para inteiros |
 
-A implementacao protege o calculo da capacidade e dos bytes contra overflow de `size_t`. Em falhas de `realloc`, o vetor anterior permanece intacto.
+A implementação verifica overflow dos cálculos de capacidade e bytes. Em falha de `realloc`, a alocação e os elementos anteriores são preservados.
 
-## Contratos e limites
+## Contratos
 
-- Passe um ponteiro para vetor valido e inicializado em todas as operacoes, exceto `init`.
-- Chame `destroy` quando terminar de usar o vetor.
-- Nao altere manualmente `data`, `size` ou `capacity` fora das funcoes da biblioteca.
-- A API atual so armazena `int`; tipos genericos ficam para versoes futuras.
-- Testes utilizam `assert`: execute sem `-DNDEBUG`.
-- A biblioteca ainda nao fornece iteradores, insercao no meio, `reserve` ou clonagem.
-
-## Proximos marcos
-
-1. Investigar os arquivos `.o`, a biblioteca estatica `.a` e o linker.
-2. Ampliar os testes e executar ferramentas de diagnostico de memoria.
-3. Adicionar `reserve`, `insert`, `erase` e benchmarks.
-4. Implementar as proximas estruturas de dados, sem esconder os mecanismos estudados.
+- Inicialize com `vector_init` antes de chamar outras operações.
+- Chame `vector_destroy` ao terminar de usar o vetor.
+- Não altere manualmente `data`, `size` ou `capacity` fora das funções.
+- Os testes usam `assert`; compile sem `-DNDEBUG`.
+- Esta primeira versão armazena apenas `int`; genericidade e operações como `insert`/`erase` poderão vir depois.
