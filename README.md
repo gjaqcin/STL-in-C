@@ -11,7 +11,6 @@ STL-in-C/
 ├── include/cstl/int_vector.h    # API publica
 ├── src/int_vector.c             # Implementacao
 ├── tests/test_int_vector.c      # Testes com assert
-├── examples/vector_example.c    # Exemplo de uso
 └── .gitignore
 ```
 
@@ -36,9 +35,6 @@ No **Windows (PowerShell, GCC MinGW)**:
 ```powershell
 gcc -std=c11 -Wall -Wextra -Wpedantic -Iinclude src/int_vector.c tests/test_int_vector.c -o test_vector.exe
 .\test_vector.exe
-
-gcc -std=c11 -Wall -Wextra -Wpedantic -Iinclude src/int_vector.c examples/vector_example.c -o vector_example.exe
-.\vector_example.exe
 ```
 
 No **Linux / macOS (GCC ou Clang)**:
