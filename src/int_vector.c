@@ -29,19 +29,17 @@ bool cstl_int_vector_push_back(cstl_int_vector *v, int value)
          * Check overflow BEFORE multiplying sizes, since size_t
          * arithmetic wraps around on overflow.
          */
-        const size_t max_elements = SIZE_MAX / sizeof(*v->data);
+        const size_t max_elements = SIZE_MAX / sizeof(*v->data); // 2^31 - 1 / 32
+
         size_t new_capacity = 4;
 
         if (v->capacity != 0)
         {
-            if (v->capacity > max_elements / 2)
-                return false;
-
+            if (v->capacity > max_elements / 2) return false;
             new_capacity = v->capacity * 2;
         }
 
-        if (new_capacity > max_elements)
-            return false;
+        if (new_capacity > max_elements) return false;
 
         /*
          * realloc(NULL, bytes) acts like malloc(bytes).
@@ -49,8 +47,7 @@ bool cstl_int_vector_push_back(cstl_int_vector *v, int value)
          * v->data after checking the temporary pointer.
          */
         int *temp = realloc(v->data, new_capacity * sizeof(*v->data));
-        if (temp == NULL)
-            return false;
+        if (temp == NULL) return false;
 
         v->data = temp;
         v->capacity = new_capacity;
@@ -64,8 +61,7 @@ bool cstl_int_vector_push_back(cstl_int_vector *v, int value)
 
 bool cstl_int_vector_pop_back(cstl_int_vector *v)
 {
-    if (v->size == 0)
-        return false;
+    if (v->size == 0) return false;
 
     /* No need to erase an int: only [0, size) is logically valid. */
     v->size--;
@@ -74,8 +70,7 @@ bool cstl_int_vector_pop_back(cstl_int_vector *v)
 
 bool cstl_int_vector_get(const cstl_int_vector *v, size_t index, int *out)
 {
-    if (index >= v->size || out == NULL)
-        return false;
+    if (index >= v->size || out == NULL) return false;
 
     *out = v->data[index];
     return true;
@@ -83,8 +78,7 @@ bool cstl_int_vector_get(const cstl_int_vector *v, size_t index, int *out)
 
 bool cstl_int_vector_set(cstl_int_vector *v, size_t index, int value)
 {
-    if (index >= v->size)
-        return false;
+    if (index >= v->size) return false;
 
     v->data[index] = value;
     return true;
