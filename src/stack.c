@@ -21,4 +21,12 @@ bool stack_top(const stack *s, int *out)
     return vector_get(&s->storage, s->storage.size - 1, out);
 }
 
+void stack_init(stack *s)
+{
+    vector_init(&s->storage);
+}
 
+void stack_destroy(stack *s)
+{
+    vector_destroy(&s->storage);
+}
