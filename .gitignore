@@ -1,0 +1,14 @@
+# Executables and intermediate files
+/build/
+*.o
+*.obj
+*.a
+*.lib
+*.exe
+*.out
+
+# Editors and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
